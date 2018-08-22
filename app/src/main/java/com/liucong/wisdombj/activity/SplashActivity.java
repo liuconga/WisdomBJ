@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.os.Handler;
+import android.support.constraint.Guideline;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
@@ -13,10 +16,12 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
+import com.liucong.utils.SPUtils;
 import com.liucong.wisdombj.R;
 
 public class SplashActivity extends AppCompatActivity {
 
+    public static final String FIRST_RUN = "first_run";
     private ImageView imageView;
 
     @Override
@@ -35,7 +40,45 @@ public class SplashActivity extends AppCompatActivity {
         //设置首页动画
         setAnimation();
         //判断是否是第一次进入主页
+        Boolean first_run = (Boolean)SPUtils.get(this, FIRST_RUN, true);
+        if(first_run){//如果是进入小向导页
+            new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                    enterGuideActivity();
+                    SPUtils.put(SplashActivity.this,FIRST_RUN,true);
+                        }
+                    },1500);
 
+
+        }else{//如果不是进入主页
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    enterMainActivity();
+                }
+            },1500);
+
+        }
+
+    }
+
+    /**
+     * 进入主页面
+     */
+    private void enterMainActivity() {
+        Intent intent =new Intent();
+        intent.setClass(this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * 进入向导页面
+     */
+    private void enterGuideActivity() {
+        Intent intent =new Intent();
+        intent.setClass(this,GuideActivity.class);
+        startActivity(intent);
     }
 
 
@@ -79,6 +122,7 @@ public class SplashActivity extends AppCompatActivity {
                 loadAnimator(this, R.animator.splash_animator);
         animator.setTarget(imageView);
         animator.start();
+
 
 
     }
