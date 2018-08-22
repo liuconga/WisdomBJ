@@ -1,4 +1,4 @@
-package com.liucong.wisdombj;
+package com.liucong.wisdombj.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
@@ -12,6 +12,8 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+
+import com.liucong.wisdombj.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -32,10 +34,14 @@ public class SplashActivity extends AppCompatActivity {
     private void initData() {
         //设置首页动画
         setAnimation();
+        //判断是否是第一次进入主页
+
     }
 
 
-
+    /**
+     * 实现splash页面动画效果
+     */
     private void setAnimation() {
         /*方法一：（1）属性动画：
         ObjectAnimator animator =ObjectAnimator.ofFloat(imageView,"rotation",
