@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.GuideActivity" />
+        <activity android:name=".activity.GuideActivity"
+            android:theme="@style/SplashTheme"/>
         <activity android:name=".activity.MainActivity"></activity>
     </application>
 
