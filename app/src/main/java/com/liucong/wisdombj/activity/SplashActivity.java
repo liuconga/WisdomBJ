@@ -42,14 +42,13 @@ public class SplashActivity extends AppCompatActivity {
         //设置首页动画
         setAnimation();
         //判断是否是第一次进入主页
-        Boolean first_run = (Boolean) SPUtils.get(this, FIRST_RUN, true);
+        Boolean first_run = (Boolean) SPUtils.get(getApplicationContext(), FIRST_RUN, true);
 
         if(first_run){//如果是进入小向导页
             new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                     enterGuideActivity();
-                    SPUtils.put(SplashActivity.this,FIRST_RUN,true);
                             finish();    }
                     },1500);
 

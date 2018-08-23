@@ -60,6 +60,6 @@
      android:layout_height="wrap_content"
      android:background="@drawable/begin_use_button"
      android:text="开始体验"
-     android:textColor="@drawable/textcolor_selector"
+     android:textColor="@color/textcolor_selector"
      android:visibility="gone"/>
 </android.support.constraint.ConstraintLayout>

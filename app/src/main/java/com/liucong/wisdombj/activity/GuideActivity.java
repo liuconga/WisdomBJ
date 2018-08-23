@@ -15,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.liucong.wisdombj.MyApplication;
 import com.liucong.wisdombj.R;
+import com.liucong.wisdombj.global.Constants;
+import com.liucong.wisdombj.util.SPUtils;
 
 public class GuideActivity extends AppCompatActivity {
 
@@ -44,11 +47,13 @@ public class GuideActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SPUtils.put(MyApplication.getContext(), Constants.FIRST_RUN,false);
                 //进入首页
                 Intent intent = new Intent();
                 intent.setClass(GuideActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();
+
             }
         });
     }
