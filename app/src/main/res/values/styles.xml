@@ -12,5 +12,30 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
-
+    <style name="BaseTheme" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <!--设置menu显示图标也就是三个点的风格-->
+        <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
+        <!--设置menu菜单 弹出菜单效果的风格-->
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
+        <!--<item name="colorPrimaryDark">#EA0200</item>-->
+    </style>
+    <style name="OverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <!--设置菜单三个点的图标-->
+        <item name="android:src">@drawable/setting</item>
+    </style>
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
+       <item name="overlapAnchor">false</item>
+        <!-- 弹出层背景颜色 -->
+        <item name="android:popupBackground">#000</item>
+        <!-- 弹出层垂直方向上的偏移，即在竖直方向上距离Toolbar的距离，值为负则会盖住Toolbar -->
+        <item name="android:dropDownVerticalOffset">5dp</item>
+        <!-- 弹出层水平方向上的偏移，即距离屏幕左边的距离，负值会导致右边出现空隙 -->
+        <item name="android:dropDownHorizontalOffset">0dp</item>
+        <!-- 设置弹出菜单文字颜色 -->
+        <item name="android:textColor">#FFf</item>
+    </style>
 </resources>
