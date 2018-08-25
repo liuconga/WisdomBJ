@@ -1,6 +1,9 @@
 package com.liucong.wisdombj.fragment;
 
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -58,6 +61,62 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
         StatusTranslucent.setStatusBarFullTransparent(appCompatActivity);
         //设置toolbar的paddingtop为状态栏高度；注意toolbar控件的高度要是wrap_content
          toolbar.setPadding(0, StatusTranslucent.getStatusBarHeight(appCompatActivity),0,0);
+        //设置主页面的viewpager
+         setViewPager();
+    }
+
+    /**
+     *  //设置主页面的viewpager
+     */
+    private void setViewPager() {
+        ViewPager viewPager = appCompatActivity.findViewById(R.id.vp_content_fragment);
+        viewPager.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return 5;
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view==object;
+            }
+
+            @NonNull
+            @Override
+            public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                View view=null;
+                switch (position){
+                    case 0:
+                        view = View.inflate(appCompatActivity, R.layout.vp_item_home, null);
+
+                        break;
+                    case 1:
+                      view = View.inflate(appCompatActivity, R.layout.vp_item_news, null);
+
+                        break;
+                    case 2:
+                         view = View.inflate(appCompatActivity, R.layout.vp_item_smartserviece, null);
+
+                        break;
+                    case 3:
+                      view = View.inflate(appCompatActivity, R.layout.vp_item_zw, null);
+
+                        break;
+                    case 4:
+                     view = View.inflate(appCompatActivity, R.layout.vp_item_setting, null);
+
+                        break;
+                }
+                container.addView(view);
+                return view;
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+               //   super.destroyItem(container, position, object); 去掉这一行
+                container.removeView((View) object);
+            }
+        });
     }
 
     /**
