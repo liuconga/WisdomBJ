@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 
 import com.liucong.wisdombj.R;
 import com.liucong.wisdombj.util.StatusTranslucent;
@@ -63,6 +64,33 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
          toolbar.setPadding(0, StatusTranslucent.getStatusBarHeight(appCompatActivity),0,0);
         //设置主页面的viewpager
          setViewPager();
+         //将viewpager与radiogroup进行关联，禁止滑动
+          RadioGroup radioGroup=appCompatActivity.findViewById(R.id.rg_fm_content);
+          final ViewPager viewPager=appCompatActivity.findViewById(R.id.vp_content_fragment);
+          radioGroup.check(R.id.home);
+          radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+              @Override
+              public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.home :
+                        viewPager.setCurrentItem(0,false);
+                        break;
+                    case R.id.news :
+                        viewPager.setCurrentItem(1,false);
+                        break;
+                    case R.id.smart :
+                        viewPager.setCurrentItem(2,false);
+                        break;
+                    case R.id.zw :
+                        viewPager.setCurrentItem(3,false);
+                        break;
+                    case R.id.setting :
+                        viewPager.setCurrentItem(4,false);
+                        break;
+                }
+
+              }
+          });
     }
 
     /**
