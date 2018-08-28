@@ -13,35 +13,28 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.liucong.wisdombj.R;
+import com.liucong.wisdombj.pager.BasePager;
+import com.liucong.wisdombj.pager.HomePager;
+import com.liucong.wisdombj.pager.NewsPager;
+import com.liucong.wisdombj.pager.SettingPager;
+import com.liucong.wisdombj.pager.SmartPager;
+import com.liucong.wisdombj.pager.ZwPager;
 import com.liucong.wisdombj.util.StatusTranslucent;
+
+import java.util.ArrayList;
 
 public class ContentFragment extends BaseFragment implements View.OnClickListener {
     private DrawerLayout drawerLayout;
-
-/*
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //必须强转成AppCompatActivity 因为只有AppCompatActivity才有以下方法.例如setSupportActionBar()
-        AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
-        //findviewbyid获取toolbar对象 必须在onCreateView()方法之后,否则会空指针；
-        Toolbar toolbar=appCompatActivity.findViewById(R.id.toolbar_main);
-        appCompatActivity.setSupportActionBar(toolbar);
-        //toolbar去除actionbar默认title显示,就是actionbar带的项目的名字 比如这个是wisdombj
-        appCompatActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-        //设置toolbar navigation图标
-        toolbar.setNavigationIcon(R.drawable.img_menu);
-        //设置显示tool上的menu 与下面onCreateOptionsMenu关联；
-        setHasOptionsMenu(true);
-    }*/
+    private ArrayList<BasePager> arrayList=new ArrayList<>();
+    private ViewPager viewPager;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container) {
         View view = inflater.inflate(R.layout.content_fragment, container, false);
         return view;
-
     }
 
     @Override
@@ -49,42 +42,74 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
         //必须强转成AppCompatActivity 因为只有AppCompatActivity才有以下方法.例如setSupportActionBar()
         appCompatActivity = (AppCompatActivity) getActivity();
         //findviewbyid获取toolbar对象 必须在onCreateView()方法之后,否则会空指针；
-        Toolbar toolbar = appCompatActivity.findViewById(R.id.toolbar_main);
+        final Toolbar toolbar = appCompatActivity.findViewById(R.id.toolbar_main);
         appCompatActivity.setSupportActionBar(toolbar);
         //toolbar去除actionbar默认title显示,就是actionbar带的项目的名字 比如这个是wisdombj
         appCompatActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
         //设置toolbar navigation图标
-        toolbar.setNavigationIcon(R.drawable.img_menu);
+//        toolbar.setNavigationIcon(R.drawable.img_menu);
         //设置显示tool上的menu 与下面onCreateOptionsMenu关联；
         setHasOptionsMenu(true);
         toolbar.setNavigationOnClickListener(this);
+        //找到drawerlayout对象
         drawerLayout = appCompatActivity.findViewById(R.id.drawer_main);
+        //设置drawerlayout不能手动滑出
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //设置状态栏透明；
         StatusTranslucent.setStatusBarFullTransparent(appCompatActivity);
         //设置toolbar的paddingtop为状态栏高度；注意toolbar控件的高度要是wrap_content
          toolbar.setPadding(0, StatusTranslucent.getStatusBarHeight(appCompatActivity),0,0);
-        //设置主页面的viewpager
+         //创建viewpager5个界面的对象并加入集合
+        arrayList.add(new HomePager(appCompatActivity));
+        arrayList.add(new NewsPager(appCompatActivity));
+        arrayList.add(new SmartPager(appCompatActivity));
+        arrayList.add(new ZwPager(appCompatActivity));
+        arrayList.add(new SettingPager(appCompatActivity));
+         //设置主页面的viewpager
          setViewPager();
          //将viewpager与radiogroup进行关联，禁止滑动
           RadioGroup radioGroup=appCompatActivity.findViewById(R.id.rg_fm_content);
-          final ViewPager viewPager=appCompatActivity.findViewById(R.id.vp_content_fragment);
+          //找到设置toolbar标题的Textview
+             final TextView textView=appCompatActivity.findViewById(R.id.toolbar_title);
           radioGroup.check(R.id.home);
           radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
               @Override
               public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId){
                     case R.id.home :
+                        textView.setText("首页");
+                        toolbar.setNavigationIcon(null);
+                        //设置drawerlayout不能手动滑出
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         viewPager.setCurrentItem(0,false);
+
                         break;
                     case R.id.news :
+                        textView.setText("新闻");
+                        toolbar.setNavigationIcon(R.drawable.img_menu);
+                        //设置drawerlayout能手动滑出
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                         viewPager.setCurrentItem(1,false);
                         break;
                     case R.id.smart :
+                        textView.setText("智慧服务");
+                        toolbar.setNavigationIcon(R.drawable.img_menu);
+                        //设置drawerlayout能手动滑出
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                         viewPager.setCurrentItem(2,false);
                         break;
                     case R.id.zw :
+                        textView.setText("政务");
+                        toolbar.setNavigationIcon(null);
+                        //设置drawerlayout不能手动滑出
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         viewPager.setCurrentItem(3,false);
                         break;
                     case R.id.setting :
+                        textView.setText("设置");
+                        toolbar.setNavigationIcon(null);
+                        //设置drawerlayout不能手动滑出
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         viewPager.setCurrentItem(4,false);
                         break;
                 }
@@ -97,7 +122,7 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
      *  //设置主页面的viewpager
      */
     private void setViewPager() {
-        ViewPager viewPager = appCompatActivity.findViewById(R.id.vp_content_fragment);
+        viewPager = appCompatActivity.findViewById(R.id.vp_content_fragment);
         viewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -112,29 +137,32 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
             @NonNull
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                View view=null;
-                switch (position){
-                    case 0:
-                        view = View.inflate(appCompatActivity, R.layout.vp_item_home, null);
-
-                        break;
-                    case 1:
-                      view = View.inflate(appCompatActivity, R.layout.vp_item_news, null);
-
-                        break;
-                    case 2:
-                         view = View.inflate(appCompatActivity, R.layout.vp_item_smartserviece, null);
-
-                        break;
-                    case 3:
-                      view = View.inflate(appCompatActivity, R.layout.vp_item_zw, null);
-
-                        break;
-                    case 4:
-                     view = View.inflate(appCompatActivity, R.layout.vp_item_setting, null);
-
-                        break;
-                }
+//                   因为加入了集合所以将其简化
+//                 View view=null;
+//                switch (position){
+//                    case 0:
+//                        HomePager homePager =new HomePager(appCompatActivity);
+//                        view = homePager.getView();
+//                        break;
+//                    case 1:
+//                        NewsPager newsPager = new NewsPager(appCompatActivity);
+//                        view=newsPager.getView();
+//                        break;
+//                    case 2:
+//                        SmartPager smartPager = new SmartPager(appCompatActivity);
+//                        view=smartPager.getView();
+//                        break;
+//                    case 3:
+//                        ZwPager zwPager = new ZwPager(appCompatActivity);
+//                        view=zwPager.getView();
+//                        break;
+//                    case 4:
+//                        SettingPager settingPager =new SettingPager(appCompatActivity);
+//                        view=settingPager.getView();
+//                        break;
+//                }
+                //通过集合获取到每个pager对象从而获取到相应的view
+                View view=arrayList.get(position).getView();
                 container.addView(view);
                 return view;
             }
