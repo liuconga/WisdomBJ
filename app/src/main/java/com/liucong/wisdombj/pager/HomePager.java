@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 
 import com.liucong.wisdombj.R;
+import com.liucong.wisdombj.util.LogUtils;
 
 public class HomePager extends BasePager{
     public HomePager(Activity activity) {
@@ -17,8 +18,8 @@ public class HomePager extends BasePager{
     }
 
 
-    protected void initData(){
-
+    public void initData(){
+        LogUtils.d("初始化viewpager","首页的数据加载了");
     }
 
 

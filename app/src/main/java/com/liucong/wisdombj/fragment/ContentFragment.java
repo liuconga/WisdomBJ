@@ -70,8 +70,11 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
          //将viewpager与radiogroup进行关联，禁止滑动
           RadioGroup radioGroup=appCompatActivity.findViewById(R.id.rg_fm_content);
           //找到设置toolbar标题的Textview
-             final TextView textView=appCompatActivity.findViewById(R.id.toolbar_title);
+          final TextView textView=appCompatActivity.findViewById(R.id.toolbar_title);
+         //adiogroup默认选中首页
           radioGroup.check(R.id.home);
+          //手动加载首页的数据
+          arrayList.get(0).initData();
           radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
               @Override
               public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -123,6 +126,7 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
      */
     private void setViewPager() {
         viewPager = appCompatActivity.findViewById(R.id.vp_content_fragment);
+        final View view =null;
         viewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -162,7 +166,10 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
 //                        break;
 //                }
                 //通过集合获取到每个pager对象从而获取到相应的view
-                View view=arrayList.get(position).getView();
+                BasePager pager =arrayList.get(position);
+                View view=pager.getView();
+                //加载各个页面的数据,但是为了避免加载两边的书，这里就不要调用它了
+//                pager.initData();
                 container.addView(view);
                 return view;
             }
@@ -173,6 +180,24 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
                 container.removeView((View) object);
             }
         });
+        //设置viewpager的切换监听
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+             arrayList.get(position).initData();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
     /**

@@ -22,7 +22,7 @@ public abstract class BasePager {
 
 
     public abstract View initView();
-    protected void initData(){
+    public void initData(){
 
     }
     public View getView(){

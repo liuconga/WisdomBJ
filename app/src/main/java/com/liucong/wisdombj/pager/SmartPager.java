@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 
 import com.liucong.wisdombj.R;
+import com.liucong.wisdombj.util.LogUtils;
 
 public class SmartPager extends BasePager{
     public SmartPager(Activity activity) {
@@ -19,7 +20,7 @@ public class SmartPager extends BasePager{
     }
 
 
-    protected void initData(){
-
+    public void initData(){
+        LogUtils.d("初始化viewpager","Smart的数据加载了");
     }
 }
