@@ -28,8 +28,8 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar_main"
         android:id="@+id/vp_content_fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+        android:layout_height="wrap_content" />
+       <!--上述是wrap_content才能让viewpager处于toolbar的下方-->
 
 <RadioGroup
     android:id="@+id/rg_fm_content"

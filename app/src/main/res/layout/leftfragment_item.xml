@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+  >
+<TextView
+    android:id="@+id/tv_item1_leftfragment"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="25sp"
+    android:drawableLeft="@drawable/left_menu_selector"
+    android:textColor="@color/left_menu_selector"
+    android:padding="10dp"
+    />
+
+
+</FrameLayout>

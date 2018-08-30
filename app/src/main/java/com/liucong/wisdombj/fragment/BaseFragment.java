@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         appCompatActivity= (AppCompatActivity) getActivity();
+
         View view =initView(inflater,container);
         return view;
     }
@@ -36,6 +38,6 @@ public abstract class BaseFragment extends Fragment {
      * 填充数据, 子类可以不重写
      */
     protected  void initData(){
-
+        Log.d("父类", "我是父类 ");
     }
 }

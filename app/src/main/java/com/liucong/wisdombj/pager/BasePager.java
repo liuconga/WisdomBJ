@@ -1,23 +1,20 @@
 package com.liucong.wisdombj.pager;
 
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.liucong.wisdombj.R;
 
 public abstract class BasePager {
-    protected Activity mActivity;
+    protected AppCompatActivity mActivity;
 
     private View view;
 
 
-    public BasePager(Activity activity) {
+    public BasePager(AppCompatActivity activity) {
         mActivity=activity;
         view=initView();
-
         mActivity.findViewById(R.id.toolbar_title);
-
-
     }
 
 

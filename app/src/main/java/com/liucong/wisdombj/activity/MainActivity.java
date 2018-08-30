@@ -1,6 +1,7 @@
 package com.liucong.wisdombj.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import com.liucong.wisdombj.fragment.LeftFragment;
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,16 @@ public class MainActivity extends AppCompatActivity {
 //        initView();
 //        initData();
         initFragment();
+        //初始化侧边栏数据；
+        setLeftMenuData();
+    }
+
+    /**
+     * 初始化侧边栏数据
+     */
+    private void setLeftMenuData() {
+        Fragment leftfragment = fragmentManager.findFragmentByTag("leftfragment");
+
     }
 
     private void initView() {
@@ -39,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initFragment() {
         //获取Fragment管理器 注意是getSupportFragmentManager
-        FragmentManager fragmentManager=getSupportFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         //开启fragment事务
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         //将布局中某个id对应的View替换成fragment；
-        transaction.add(R.id.fl_content,new ContentFragment());
-        transaction.add(R.id.fl_left,new LeftFragment());
+        transaction.add(R.id.fl_content,new ContentFragment(),"contentfragment");
+        transaction.add(R.id.fl_left,new LeftFragment(),"leftfragment");
         transaction.commit();
 
     }

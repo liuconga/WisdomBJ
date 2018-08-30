@@ -1,13 +1,13 @@
 package com.liucong.wisdombj.pager;
 
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.liucong.wisdombj.R;
 import com.liucong.wisdombj.util.LogUtils;
 
 public class HomePager extends BasePager{
-    public HomePager(Activity activity) {
+    public HomePager(AppCompatActivity activity) {
        super(activity);
     }
 
