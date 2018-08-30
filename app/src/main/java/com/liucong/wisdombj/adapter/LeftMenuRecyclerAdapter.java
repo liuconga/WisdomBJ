@@ -16,9 +16,10 @@ public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecycl
     private OnRecyclerviewItemClickListener listener;
     private String[] menus;
        //构造方法中接收传入的OnRecyclerviewItemClickListener
-    public LeftMenuRecyclerAdapter(String[] menus,OnRecyclerviewItemClickListener listener) {
+    public LeftMenuRecyclerAdapter(int mPosition,String[] menus,OnRecyclerviewItemClickListener listener) {
         this.listener = listener;
         this.menus=menus;
+       mSelection=mPosition;
     }
 
     @NonNull

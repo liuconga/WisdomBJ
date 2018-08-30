@@ -25,13 +25,13 @@ public class LeftFragment extends BaseFragment {
         //找到drawerlayout对象
         drawerLayout = appCompatActivity.findViewById(R.id.drawer_main);
     }
-    public void setData(String[] menus, final OnMenuItemClickListener listener){
+    public void setData(int mPositon,String[] menus, final OnMenuItemClickListener listener){
         //找到recylerview对象
-        RecyclerView recyclerView = appCompatActivity.findViewById(R.id.recyclerview_leftfragment);
+        final RecyclerView recyclerView = appCompatActivity.findViewById(R.id.recyclerview_leftfragment);
         recyclerView.setLayoutManager(new LinearLayoutManager(appCompatActivity));
         //让左侧边栏条目 默认点击成第一个 新闻 或者是公积金；
-        listener.menuItemClick(0);
-        LeftMenuRecyclerAdapter adapter =new LeftMenuRecyclerAdapter(menus,
+        listener.menuItemClick(mPositon);
+        LeftMenuRecyclerAdapter adapter =new LeftMenuRecyclerAdapter(mPositon,menus,
                 new OnRecyclerviewItemClickListener() {
                     @Override
                     //监听的回调
