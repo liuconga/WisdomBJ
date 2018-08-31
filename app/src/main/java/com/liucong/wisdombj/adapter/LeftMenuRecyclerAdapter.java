@@ -11,12 +11,14 @@ import com.liucong.wisdombj.R;
 import com.liucong.wisdombj.inter.OnRecyclerviewItemClickListener;
 import com.liucong.wisdombj.util.LogUtils;
 
+import java.util.ArrayList;
+
 public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecyclerAdapter.ViewHolder> {
     private int mSelection;
     private OnRecyclerviewItemClickListener listener;
-    private String[] menus;
+    private ArrayList<String> menus;
        //构造方法中接收传入的OnRecyclerviewItemClickListener
-    public LeftMenuRecyclerAdapter(int mPosition,String[] menus,OnRecyclerviewItemClickListener listener) {
+    public LeftMenuRecyclerAdapter(int mPosition, ArrayList<String> menus, OnRecyclerviewItemClickListener listener) {
         this.listener = listener;
         this.menus=menus;
         mSelection=mPosition;
@@ -45,7 +47,7 @@ public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(menus[position]);
+        holder.textView.setText(menus.get(position));
         //给view设置tag以作为参数传递到监听回调方法中
         holder.itemView.setTag(position);
         //一开始因为mSelection默认初始化为0 所以默认选中的是新闻；
@@ -55,7 +57,7 @@ public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecycl
 
     @Override
     public int getItemCount() {
-        return menus.length;
+        return menus.size();
     }
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;

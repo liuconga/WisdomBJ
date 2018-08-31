@@ -7,8 +7,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.liucong.wisdombj.R;
+import com.liucong.wisdombj.bean.NewsCenterBean;
+import com.liucong.wisdombj.bean.NewsCenterDataBean;
 import com.liucong.wisdombj.fragment.LeftFragment;
+import com.liucong.wisdombj.global.Constants;
 import com.liucong.wisdombj.inter.OnMenuItemClickListener;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterHudong;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterNews;
@@ -16,14 +20,35 @@ import com.liucong.wisdombj.pager.newscenter.NewsCenterTopic;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterZutu;
 import com.liucong.wisdombj.util.LogUtils;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class NewsPager extends BasePager {
-    private String[] menus = new String[]{"新闻", "专题", "组图", "互动"};
     private FrameLayout frameLayout;
     private DrawerLayout drawerLayout;
     private TextView textView_toolbar_title;
-   private int mPosition;
+    private int mPosition;
+    ArrayList<String> menus=new ArrayList<>();
+    private NewsCenterBean newsCenterBean;
+
+    /**
+     * retcode : 200
+     * data : [{"id":10000,"title":"新闻","type":1,"children":[{"id":10007,"title":"北京","type":1,"url":"/10007/list_1.json"},{"id":10006,"title":"中国","type":1,"url":"/10006/list_1.json"},{"id":10008,"title":"国际","type":1,"url":"/10008/list_1.json"},{"id":10010,"title":"体育","type":1,"url":"/10010/list_1.json"},{"id":10091,"title":"生活","type":1,"url":"/10091/list_1.json"},{"id":10012,"title":"旅游","type":1,"url":"/10012/list_1.json"},{"id":10095,"title":"科技","type":1,"url":"/10095/list_1.json"},{"id":10009,"title":"军事","type":1,"url":"/10009/list_1.json"},{"id":10093,"title":"时尚","type":1,"url":"/10093/list_1.json"},{"id":10011,"title":"财经","type":1,"url":"/10011/list_1.json"},{"id":10094,"title":"育儿","type":1,"url":"/10094/list_1.json"},{"id":10105,"title":"汽车","type":1,"url":"/10105/list_1.json"}]},{"id":10002,"title":"专题","type":10,"url":"/10006/list_1.json","url1":"/10007/list1_1.json"},{"id":10003,"title":"组图","type":2,"url":"/10008/list_1.json"},{"id":10004,"title":"互动","type":3,"excurl":"","dayurl":"","weekurl":""}]
+     * extend : [10007,10006,10008,10014,10012,10091,10009,10010,10095]
+     */
+
+
     public NewsPager(AppCompatActivity activity) {
         super(activity);
+        //连接网络获取服务端数据；
+        LogUtils.d("联网获取数据","我联网了");
+         getDataFromNet();
     }
 
     @Override
@@ -37,7 +62,7 @@ public class NewsPager extends BasePager {
      * 1.初始化新闻中心数据，新闻中心分为四个专题：新闻，专题，组图，互动；通过侧滑菜单来进行切换
      */
     public void initData() {
-        LogUtils.d("哈哈","【initData】NewsPagerSetData()执行啦");
+
         drawerLayout = mActivity.findViewById(R.id.drawer_main);
         frameLayout = mActivity.findViewById(R.id.fl_newscenter);
         textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
@@ -55,13 +80,13 @@ public class NewsPager extends BasePager {
         FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
         //2.通过设置的tag找到fragment
         LeftFragment leftfragment = (LeftFragment) fragmentManager.findFragmentByTag("leftfragment");
-        LogUtils.d("哈哈","NewsPagerSetData()执行啦");
+        LogUtils.d("哈哈", "NewsPagerSetData()执行啦");
         //设置LeftFragment中数据
-        leftfragment.setData(mPosition,menus, new OnMenuItemClickListener() {
+        leftfragment.setData(mPosition, menus, new OnMenuItemClickListener() {
             @Override
             public void menuItemClick(int position) {
                 //记录上次点击的位置
-                mPosition=position;
+                mPosition = position;
                 switch (position) {
                     case 0:
                         //将toolbar标题设成新闻
@@ -149,5 +174,39 @@ public class NewsPager extends BasePager {
 
     }
 
+    /**
+     * 从互联网获取数据
+     */
+    private void getDataFromNet() {
 
+        //我们使用okhttp
+        //首先创建okhttp客户端
+        OkHttpClient okHttpClient = new OkHttpClient();
+        //构建一个请求对象Request 默认是get请求；
+        Request request = new Request.Builder().get().url(Constants.NEWS_CENTER).build();
+        //通过上述两个参数 构建call对象
+        Call call = okHttpClient.newCall(request);
+        //通过call的equeue方法提交异步请求 通过回调回去数据；
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogUtils.d("okhttp请求", "请求失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                LogUtils.d("okhttp请求", "请求成功");
+                //json解析 将json解析到相应的bean中
+                Gson gson =new Gson();
+                newsCenterBean = gson.fromJson(response.body().string(), NewsCenterBean.class);
+//                LogUtils.d("标题",newsCenterBean.getData()+"");
+                //遍历NewsCenterDataBean
+                for(NewsCenterDataBean dataBean :newsCenterBean.getData()){
+                    menus.add(dataBean.getTitle());
+                }
+
+            }
+        });
+
+    }
 }

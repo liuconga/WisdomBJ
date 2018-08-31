@@ -12,6 +12,8 @@ import com.liucong.wisdombj.adapter.LeftMenuRecyclerAdapter;
 import com.liucong.wisdombj.inter.OnMenuItemClickListener;
 import com.liucong.wisdombj.inter.OnRecyclerviewItemClickListener;
 
+import java.util.ArrayList;
+
 public class LeftFragment extends BaseFragment {
     private DrawerLayout drawerLayout;
     @Override
@@ -25,7 +27,7 @@ public class LeftFragment extends BaseFragment {
         //找到drawerlayout对象
         drawerLayout = appCompatActivity.findViewById(R.id.drawer_main);
     }
-    public void setData(int mPositon,String[] menus, final OnMenuItemClickListener listener){
+    public void setData(int mPositon, ArrayList<String> menus, final OnMenuItemClickListener listener){
         //找到recylerview对象
         final RecyclerView recyclerView = appCompatActivity.findViewById(R.id.recyclerview_leftfragment);
         recyclerView.setLayoutManager(new LinearLayoutManager(appCompatActivity));

@@ -22,6 +22,7 @@ import com.liucong.wisdombj.pager.NewsPager;
 import com.liucong.wisdombj.pager.SettingPager;
 import com.liucong.wisdombj.pager.SmartPager;
 import com.liucong.wisdombj.pager.ZwPager;
+import com.liucong.wisdombj.util.LogUtils;
 import com.liucong.wisdombj.util.StatusTranslucent;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
          //创建viewpager5个界面的对象并加入集合
         arrayList.add(new HomePager(appCompatActivity));
         arrayList.add(new NewsPager(appCompatActivity));
+        LogUtils.d("联网获取数据","我创建了");
         arrayList.add(new SmartPager(appCompatActivity));
         arrayList.add(new ZwPager(appCompatActivity));
         arrayList.add(new SettingPager(appCompatActivity));
