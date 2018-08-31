@@ -19,7 +19,7 @@ public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecycl
     public LeftMenuRecyclerAdapter(int mPosition,String[] menus,OnRecyclerviewItemClickListener listener) {
         this.listener = listener;
         this.menus=menus;
-       mSelection=mPosition;
+        mSelection=mPosition;
     }
 
     @NonNull
@@ -45,7 +45,6 @@ public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LogUtils.d("执行","onBindViewHolder我执行了+1");
         holder.textView.setText(menus[position]);
         //给view设置tag以作为参数传递到监听回调方法中
         holder.itemView.setTag(position);
@@ -62,7 +61,6 @@ public class LeftMenuRecyclerAdapter extends RecyclerView.Adapter<LeftMenuRecycl
         TextView textView;
         public ViewHolder(View itemView) {
             super(itemView);
-            LogUtils.d("执行","ViewHOlder我执行了+1");
             textView = itemView.findViewById(R.id.tv_item1_leftfragment);
 
         }

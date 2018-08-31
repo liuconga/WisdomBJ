@@ -14,6 +14,7 @@ import com.liucong.wisdombj.pager.newscenter.NewsCenterHudong;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterNews;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterTopic;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterZutu;
+import com.liucong.wisdombj.util.LogUtils;
 
 public class NewsPager extends BasePager {
     private String[] menus = new String[]{"新闻", "专题", "组图", "互动"};
@@ -36,6 +37,7 @@ public class NewsPager extends BasePager {
      * 1.初始化新闻中心数据，新闻中心分为四个专题：新闻，专题，组图，互动；通过侧滑菜单来进行切换
      */
     public void initData() {
+        LogUtils.d("哈哈","【initData】NewsPagerSetData()执行啦");
         drawerLayout = mActivity.findViewById(R.id.drawer_main);
         frameLayout = mActivity.findViewById(R.id.fl_newscenter);
         textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
@@ -53,10 +55,12 @@ public class NewsPager extends BasePager {
         FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
         //2.通过设置的tag找到fragment
         LeftFragment leftfragment = (LeftFragment) fragmentManager.findFragmentByTag("leftfragment");
+        LogUtils.d("哈哈","NewsPagerSetData()执行啦");
         //设置LeftFragment中数据
         leftfragment.setData(mPosition,menus, new OnMenuItemClickListener() {
             @Override
             public void menuItemClick(int position) {
+                //记录上次点击的位置
                 mPosition=position;
                 switch (position) {
                     case 0:

@@ -12,6 +12,7 @@ import com.liucong.wisdombj.fragment.LeftFragment;
 import com.liucong.wisdombj.inter.OnMenuItemClickListener;
 import com.liucong.wisdombj.pager.smartservice.SmartServiceGongJiJin;
 import com.liucong.wisdombj.pager.smartservice.SmartServiceYiBao;
+import com.liucong.wisdombj.util.LogUtils;
 
 public class SmartPager extends BasePager {
     private String[] menus = new String[]{"公积金", "医保"};
@@ -45,6 +46,7 @@ public class SmartPager extends BasePager {
         FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
         //2.通过设置的tag找到fragment
         LeftFragment leftfragment = (LeftFragment) fragmentManager.findFragmentByTag("leftfragment");
+        LogUtils.d("哈哈","NewsPagerSetData()执行啦");
         //设置LeftFragment中数据
         leftfragment.setData(mPosition,menus, new OnMenuItemClickListener() {
             @Override
