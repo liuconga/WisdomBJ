@@ -3,11 +3,13 @@ package com.liucong.wisdombj.pager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.liucong.wisdombj.MyApplication;
 import com.liucong.wisdombj.R;
 import com.liucong.wisdombj.bean.NewsCenterBean;
 import com.liucong.wisdombj.bean.NewsCenterDataBean;
@@ -19,6 +21,7 @@ import com.liucong.wisdombj.pager.newscenter.NewsCenterNews;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterTopic;
 import com.liucong.wisdombj.pager.newscenter.NewsCenterZutu;
 import com.liucong.wisdombj.util.LogUtils;
+import com.liucong.wisdombj.util.SPUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +51,8 @@ public class NewsPager extends BasePager {
         super(activity);
         //连接网络获取服务端数据；
         LogUtils.d("联网获取数据","我联网了");
-         getDataFromNet();
+
+
     }
 
     @Override
@@ -63,11 +67,19 @@ public class NewsPager extends BasePager {
      */
     public void initData() {
 
-        drawerLayout = mActivity.findViewById(R.id.drawer_main);
-        frameLayout = mActivity.findViewById(R.id.fl_newscenter);
-        textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
-        //设置左侧侧边栏布局文件 因为每个都不一样
-        setLeftMenuData();
+        //每次切换RadioButton（切换Pager页面时） 清楚menus中内容 因为每次请求网络都往menus中添加了内容
+        menus.clear();
+        //获取缓存侧边栏的数据
+        String leftmenucache = (String) SPUtils.get(MyApplication.getContext(), "leftmenucache", "");
+        //如果缓存的左侧边栏数据不为空
+        if(!TextUtils.isEmpty(leftmenucache)){
+            //解析缓存的字符串
+            parseJson(leftmenucache);
+            LogUtils.d("缓存","我执行了缓存");
+        }
+        menus.clear();
+        //请求网络
+        getDataFromNet();
 
     }
 
@@ -95,6 +107,7 @@ public class NewsPager extends BasePager {
                         drawerLayout.closeDrawers();
                         //将contentFragment 中新闻内容换成 新闻
                         //首先移除Framlayout这个viewgroup中所有子view
+
                         frameLayout.removeAllViews();
 //                     //填充出一个view
 //                     View view = View.inflate(mActivity, R.layout.newscenter_news, null);
@@ -196,17 +209,33 @@ public class NewsPager extends BasePager {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 LogUtils.d("okhttp请求", "请求成功");
-                //json解析 将json解析到相应的bean中
-                Gson gson =new Gson();
-                newsCenterBean = gson.fromJson(response.body().string(), NewsCenterBean.class);
-//                LogUtils.d("标题",newsCenterBean.getData()+"");
-                //遍历NewsCenterDataBean
-                for(NewsCenterDataBean dataBean :newsCenterBean.getData()){
-                    menus.add(dataBean.getTitle());
-                }
-
+                String data =response.body().string();
+                parseJson(data);
+                SPUtils.put(MyApplication.getContext(),"leftmenucache",data);
             }
         });
 
+    }
+    public void parseJson(String data){
+
+        //json解析 将json解析到相应的bean中
+        Gson gson =new Gson();
+        newsCenterBean = gson.fromJson(data, NewsCenterBean.class);
+
+        //遍历NewsCenterDataBean
+        for(NewsCenterDataBean dataBean :newsCenterBean.getData()){
+            menus.add(dataBean.getTitle());
+        }
+        //设置左侧边栏布局必须在主线程中完成；
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                drawerLayout = mActivity.findViewById(R.id.drawer_main);
+                frameLayout = mActivity.findViewById(R.id.fl_newscenter);
+                textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
+                //设置左侧侧边栏布局文件 因为每个都不一样
+                setLeftMenuData();
+            }
+        });
     }
 }

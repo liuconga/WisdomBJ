@@ -10,6 +10,4 @@ public class NewsCenterBean {
     public ArrayList<NewsCenterDataBean> getData() {
         return data;
     }
-
-
 }

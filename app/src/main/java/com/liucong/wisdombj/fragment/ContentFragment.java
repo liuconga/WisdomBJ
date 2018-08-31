@@ -190,6 +190,7 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
             @Override
             public void onPageSelected(int position) {
               //当页面切换时加载当前页面的数据；防止预加载左右两页
+
                 arrayList.get(position).initData();
             }
             @Override
