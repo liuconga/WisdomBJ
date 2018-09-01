@@ -33,7 +33,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class NewsPager extends BasePager {
-    private FrameLayout frameLayout;
+private FrameLayout frameLayout;
     private DrawerLayout drawerLayout;
     private TextView textView_toolbar_title;
     private int mPosition;
@@ -52,12 +52,14 @@ public class NewsPager extends BasePager {
         //连接网络获取服务端数据；
         LogUtils.d("联网获取数据","我联网了");
 
-
     }
 
     @Override
     public View initView() {
         View view = View.inflate(mActivity, R.layout.vp_item_news, null);
+        drawerLayout = mActivity.findViewById(R.id.drawer_main);
+        textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
+        frameLayout = view.findViewById(R.id.fl_newscenter);
         return view;
     }
 
@@ -230,9 +232,7 @@ public class NewsPager extends BasePager {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                drawerLayout = mActivity.findViewById(R.id.drawer_main);
-                frameLayout = mActivity.findViewById(R.id.fl_newscenter);
-                textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
+
                 //设置左侧侧边栏布局文件 因为每个都不一样
                 setLeftMenuData();
             }

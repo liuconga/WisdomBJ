@@ -3,11 +3,13 @@ package com.liucong.wisdombj.pager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.liucong.wisdombj.MyApplication;
 import com.liucong.wisdombj.R;
 import com.liucong.wisdombj.bean.SmartServiceBean;
 import com.liucong.wisdombj.bean.SmartServiceDataBean;
@@ -17,6 +19,7 @@ import com.liucong.wisdombj.inter.OnMenuItemClickListener;
 import com.liucong.wisdombj.pager.smartservice.SmartServiceGongJiJin;
 import com.liucong.wisdombj.pager.smartservice.SmartServiceYiBao;
 import com.liucong.wisdombj.util.LogUtils;
+import com.liucong.wisdombj.util.SPUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,25 +38,35 @@ public class SmartPager extends BasePager {
     ArrayList<String> menus=new ArrayList<>();
     public SmartPager(AppCompatActivity activity) {
         super(activity);
-        //连接网络获取服务端数据；
-        getDataFromNet();
+
     }
 
 
     @Override
     public View initView() {
         View view = View.inflate(mActivity, R.layout.vp_item_smartserviece, null);
+        drawerLayout = mActivity.findViewById(R.id.drawer_main);
+        frameLayout = view.findViewById(R.id.fl_smart);
+        textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
         return view;
     }
 
 
     public void initData() {
+        //每次切换RadioButton（切换Pager页面时） 清楚menus中内容 因为每次请求网络都往menus中添加了内容
+        menus.clear();
+        //获取缓存侧边栏的数据
+        String leftmenucache_smart = (String) SPUtils.get(MyApplication.getContext(), "leftmenucache_smart", "");
+        //如果缓存的左侧边栏数据不为空
+        if(!TextUtils.isEmpty(leftmenucache_smart)){
+            //解析缓存的字符串
+            parseJson(leftmenucache_smart);
+            LogUtils.d("缓存","我执行了缓存");
+        }
+        menus.clear();
+        //请求网络
+        getDataFromNet();
 
-        drawerLayout = mActivity.findViewById(R.id.drawer_main);
-        frameLayout = mActivity.findViewById(R.id.fl_smart);
-        textView_toolbar_title = mActivity.findViewById(R.id.toolbar_title);
-        //设置左侧侧边栏布局文件 因为每个都不一样
-        setLeftMenuData();
     }
 
     private void setLeftMenuData() {
@@ -133,18 +146,28 @@ public class SmartPager extends BasePager {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 LogUtils.d("okhttp请求", "请求成功");
-                //json解析 将json解析到相应的bean中
-                Gson gson =new Gson();
-                SmartServiceBean smartServiceBean = gson.fromJson(response.body().string(), SmartServiceBean.class);
-//                LogUtils.d("标题",newsCenterBean.getData()+"");
-                //遍历NewsCenterDataBean
-
-                for(SmartServiceDataBean dataBean :smartServiceBean.getData()){
-                    menus.add(dataBean.getTitle());
+                String data =response.body().string();
+                parseJson(data);
+                SPUtils.put(MyApplication.getContext(),"leftmenucache_smart",data);
                 }
-
-            }
         });
 
+    }
+    public void parseJson(String data){
+
+        //json解析 将json解析到相应的bean中
+        Gson gson =new Gson();
+        SmartServiceBean smartServiceBean = gson.fromJson(data, SmartServiceBean.class);
+        //遍历SmartServiceDataBean
+        for(SmartServiceDataBean dataBean :smartServiceBean.getData()){
+            menus.add(dataBean.getTitle());}
+        //设置左侧边栏布局必须在主线程中完成；
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //设置左侧侧边栏布局文件 因为每个都不一样
+                setLeftMenuData();
+            }
+        });
     }
 }

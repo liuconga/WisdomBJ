@@ -31,7 +31,6 @@ public class ContentFragment extends BaseFragment implements View.OnClickListene
     private DrawerLayout drawerLayout;
     private ArrayList<BasePager> arrayList=new ArrayList<>();
     private ViewPager viewPager;
-
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container) {
         View view = inflater.inflate(R.layout.content_fragment, container, false);
