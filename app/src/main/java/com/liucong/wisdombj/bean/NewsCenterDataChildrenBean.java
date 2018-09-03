@@ -5,4 +5,12 @@ public class NewsCenterDataChildrenBean {
     private String title;
     private int type;
     private String url;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }
