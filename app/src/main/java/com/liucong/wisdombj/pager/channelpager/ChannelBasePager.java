@@ -24,7 +24,6 @@ public  class ChannelBasePager {
      */
     protected  View initView(){
         view=View.inflate(mActivity, R.layout.news_channel,null);
-        textView = view.findViewById(R.id.news_channel_tv);
         return view;
     }
 
@@ -32,10 +31,13 @@ public  class ChannelBasePager {
      * 初始化数据 子类可实现可不实现
      */
     public void initData(){
-        textView.setText(dataChildrenBean.getTitle());
 
     }
     public View getView(){
         return view;
+    }
+
+    public NewsCenterDataChildrenBean getDataChildrenBean() {
+        return dataChildrenBean;
     }
 }

@@ -1,8 +1,11 @@
 package com.liucong.wisdombj.pager.newscenter;
 
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.liucong.wisdombj.R;
@@ -27,7 +30,9 @@ import okhttp3.Response;
 public class NewsCenterNews extends NewsCenterBase {
 
     private ViewPager viewPager;
-   private ArrayList<ChannelBasePager> channels;
+    private ArrayList<ChannelBasePager> channels;
+    private TabLayout tabLayout;
+
     public NewsCenterNews(AppCompatActivity mActivity) {
         super(mActivity);
     }
@@ -37,12 +42,21 @@ public class NewsCenterNews extends NewsCenterBase {
         //填充出一个view
         View view = View.inflate(mActivity, R.layout.newscenter_news, null);
         viewPager = view.findViewById(R.id.vp_newscenter_news);
+        tabLayout = view.findViewById(R.id.tablayout_news_channel);
         return view;
     }
     @Override
     public void initData(){
+        //设置TabLayout各个tab之间的分割线
+        LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
+        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        //设置分割线的高度
+        linearLayout.setDividerPadding(15);
+        linearLayout.setDividerDrawable(ContextCompat.getDrawable(mActivity,R.drawable.divider_vertical));
+        //初始化顶部导航标签,与viewpager进行关联
+        tabLayout.setupWithViewPager(viewPager);
         channels=new ArrayList<>();
-      //联网获取数据
+        //联网获取数据
         getDataFromNet();
     }
     /**
