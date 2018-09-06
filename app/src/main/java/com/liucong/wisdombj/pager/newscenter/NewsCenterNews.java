@@ -116,7 +116,7 @@ public class NewsCenterNews extends NewsCenterBase {
                  mPositon=new int[channels.size()];
                  viewPager.setAdapter(new NewsCenterNewsViewPagerAdapter(channels));
                  //默认选中界面0
-                 channels.get(0).initData(0);
+                 channels.get(0).initData(0,0);
                  viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                      @Override
                      public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
@@ -134,7 +134,7 @@ public class NewsCenterNews extends NewsCenterBase {
                              }
                          });
                          //当界面被选中时initData
-                         channels.get(position).initData(mPositon[position]);
+                         channels.get(position).initData(mPositon[position],position);
                          //关闭循环
                          channels.get(position).setHandler(new RemoveHandler() {
                              @Override

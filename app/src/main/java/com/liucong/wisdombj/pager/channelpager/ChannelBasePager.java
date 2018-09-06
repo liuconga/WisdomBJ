@@ -25,6 +25,7 @@ import com.liucong.wisdombj.pager.newscenter.NewsCenterNews;
 import com.liucong.wisdombj.util.LogUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -33,22 +34,24 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public  class ChannelBasePager {
+public class ChannelBasePager {
     protected AppCompatActivity mActivity;
     private View view;
     private NewsCenterDataChildrenBean dataChildrenBean;
     private TextView textView;
     private ViewPager viewPager;
+    private ArrayList<ArrayList<ImageView>> arrayLists1 = new ArrayList<>();
+    private ArrayList<ImageView>[] arrayLists = new ArrayList[12];
     @SuppressLint("HandlerLeak")
-    Handler handler=new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 //            super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
-                viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
-                handler.sendEmptyMessageDelayed(0,3000);
-                break;
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                    handler.sendEmptyMessageDelayed(0, 3000);
+                    break;
             }
 
         }
@@ -57,18 +60,19 @@ public  class ChannelBasePager {
     private LinearLayout linearLayout;
     private int mPostion;
     private int currentPositon;
+    private int positonWai;
 
     public ChannelBasePager(AppCompatActivity mActivity, NewsCenterDataChildrenBean dataChildrenBean) {
         this.mActivity = mActivity;
-        this.dataChildrenBean=dataChildrenBean;
-        view=initView();
+        this.dataChildrenBean = dataChildrenBean;
+        view = initView();
     }
 
     /**
      * 让子类去实现initview
      */
-    protected  View initView(){
-        view=View.inflate(mActivity, R.layout.news_channel,null);
+    protected View initView() {
+        view = View.inflate(mActivity, R.layout.news_channel, null);
         viewPager = view.findViewById(R.id.vp_news_channel);
         linearLayout = view.findViewById(R.id.ll_news_channel);
         return view;
@@ -77,31 +81,35 @@ public  class ChannelBasePager {
     /**
      * 回调方法，主要是将，handler传到NewsCenterNews中
      */
-    public void  setHandler(NewsCenterNews.RemoveHandler removeHandler){
+    public void setHandler(NewsCenterNews.RemoveHandler removeHandler) {
 
-       removeHandler.remove(handler);
+        removeHandler.remove(handler);
     }
+
     /**
      * 初始化数据 子类可实现可不实现
      */
     @SuppressLint("HandlerLeak")
-    public void initData(int mPostion){
-        currentPositon =mPostion;
+    public void initData(int mPostion, int positionWai) {
+        currentPositon = mPostion;
+        this.positonWai = positionWai;
         //从网络获取数据
         getDataFromNet();
     }
-    public View getView(){
+
+    public View getView() {
         return view;
     }
 
     public NewsCenterDataChildrenBean getDataChildrenBean() {
         return dataChildrenBean;
     }
+
     /**
      * 从互联网获取数据
      */
     private void getDataFromNet() {
-        String url = Constants.BASE+dataChildrenBean.getUrl();
+        String url = Constants.BASE + dataChildrenBean.getUrl();
         //我们使用okhttp
         //首先创建okhttp客户端
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -119,41 +127,51 @@ public  class ChannelBasePager {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 LogUtils.d("okhttp请求", "请求成功");
-                String data =response.body().string();
+                String data = response.body().string();
                 parseJson(data);
             }
         });
 
     }
-    public void parseJson(String data){
+
+    public void parseJson(String data) {
         //json解析 将json解析到相应的bean中
-        Gson gson =new Gson();
+        Gson gson = new Gson();
         final NewsChannelData newsChannelData = gson.fromJson(data, NewsChannelData.class);
         final NewsChannelDataBean newsChannelDataBean = newsChannelData.getData();
         topnews = newsChannelDataBean.getTopnews();
-        Log.d("我是TopNews",topnews.size()+" 执行了");
+        Log.d("我是TopNews", topnews.size() + " 执行了");
         mActivity.runOnUiThread(new Runnable() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public void run() {
                 viewPager.setAdapter(new NewChannelAdapter(topnews));
-                if (currentPositon==0){
-                viewPager.setCurrentItem(viewPager.getAdapter().getCount()/2);}
-                else {
-                viewPager.setCurrentItem(currentPositon);
+                if (currentPositon == 0) {
+                    viewPager.setCurrentItem(viewPager.getAdapter().getCount() / 2);
+                } else {
+                    viewPager.setCurrentItem(currentPositon);
                 }
                 setBannerIndicator();
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                         //传送当前的positon给上一层viewpager
-                        mPostion =position;
+                        mPostion = position;
                         handler.removeCallbacksAndMessages(null);
-                        handler.sendEmptyMessageDelayed(0,3000);
+                        handler.sendEmptyMessageDelayed(0, 3000);
                     }
 
                     @Override
                     public void onPageSelected(int position) {
+                        //当轮播图切换时，切换小圆点选中状态；
+                        position = position % (viewPager.getAdapter().getCount() / 10000);
+                        for (int i = 0; i < arrayLists[positonWai].size(); i++) {
+                            if (i == position) {
+                                arrayLists[positonWai].get(i).setImageResource(R.drawable.banner_dot_select);
+                            }else {
+                                arrayLists[positonWai].get(i).setImageResource(R.drawable.banner_dot);
+                            }
+                        }
 
                     }
 
@@ -165,15 +183,15 @@ public  class ChannelBasePager {
 
 //                Log.d("孩子1",linearLayout.getChildCount()+" ");
                 //让viewpager实现自动轮播
-                handler.sendEmptyMessageDelayed(0,3000);
+                handler.sendEmptyMessageDelayed(0, 3000);
                 viewPager.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
-                        switch (event.getAction()){
+                        switch (event.getAction()) {
                             case MotionEvent.ACTION_DOWN:
 //                                handler.removeMessages(0);
                                 handler.removeCallbacksAndMessages(null);
-                            break;
+                                break;
 
                             case MotionEvent.ACTION_UP:
                                 handler.sendEmptyMessageDelayed(0, 3000);
@@ -187,23 +205,45 @@ public  class ChannelBasePager {
         });
 
     }
-     //设置小圆点
-     public void  setBannerIndicator(){
-        for(int i=0;i<topnews.size();i++){
-            ImageView view=new ImageView(MyApplication.getContext());
-            view.setImageResource(R.drawable.banner_dot);
-            view.setPadding(20,0,0,0);
-            linearLayout.addView(view);
 
-
+    //设置小圆点
+    public void setBannerIndicator() {
+        linearLayout.removeAllViews();
+        ArrayList<ImageView> imageViews = new ArrayList<>();
+        //如果相应数组位置为空则新创建imageview集合
+        if (arrayLists[positonWai] == null) {
+            for (int i = 0; i < topnews.size(); i++) {
+                ImageView view = new ImageView(MyApplication.getContext());
+                if (i == currentPositon) {
+                    view.setImageResource(R.drawable.banner_dot_select);
+                } else {
+                    view.setImageResource(R.drawable.banner_dot);
+                }
+                view.setPadding(20, 0, 0, 0);
+                imageViews.add(view);
+                linearLayout.addView(view);
+            }
+            arrayLists[positonWai] = imageViews;
         }
+        //否则从相应数组位置的集合中取出imageview
+        else {
+            for (int i = 0; i < arrayLists[positonWai].size(); i++) {
+                Log.d("长度", arrayLists[positonWai].size() + "");
 
+                ImageView imageView = arrayLists[positonWai].get(i);
+                if (i == currentPositon) {
+                    imageView.setImageResource(R.drawable.banner_dot_select);
+                }
+                linearLayout.addView(imageView);
+            }
+        }
     }
-    public void JiBanner(NewsCenterNews.JiLuBanner jiLuBanner){
+
+    public void JiBanner(NewsCenterNews.JiLuBanner jiLuBanner) {
         jiLuBanner.JiLU(mPostion);
     }
 
 
-    }
+}
 
 
