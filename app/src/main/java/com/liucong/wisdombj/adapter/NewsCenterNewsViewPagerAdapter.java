@@ -35,7 +35,7 @@ public class NewsCenterNewsViewPagerAdapter extends PagerAdapter {
         LogUtils.d("初始化","执行了");
         container.addView(view);
         LogUtils.d("初始化","执行了+1");
-        channelBasePagers.get(position).initData();
+//        channelBasePagers.get(position).initData();
         return view;
     }
 

@@ -1,9 +1,11 @@
 package com.liucong.wisdombj.pager.newscenter;
 
+import android.annotation.SuppressLint;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -32,7 +34,16 @@ public class NewsCenterNews extends NewsCenterBase {
     private ViewPager viewPager;
     private ArrayList<ChannelBasePager> channels;
     private TabLayout tabLayout;
+    private int[] mPositon;
 
+    public interface RemoveHandler{
+
+        void remove(android.os.Handler handler);
+    }
+    public interface JiLuBanner{
+
+        void JiLU(int position);
+    }
     public NewsCenterNews(AppCompatActivity mActivity) {
         super(mActivity);
     }
@@ -47,6 +58,7 @@ public class NewsCenterNews extends NewsCenterBase {
     }
     @Override
     public void initData(){
+
         //设置TabLayout各个tab之间的分割线
         LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
         linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -88,25 +100,83 @@ public class NewsCenterNews extends NewsCenterBase {
 
     }
     public void parseJson(String data){
-
         //json解析 将json解析到相应的bean中
         Gson gson =new Gson();
-        NewsCenterBean newsCenterBean = gson.fromJson(data, NewsCenterBean.class);
+        final NewsCenterBean newsCenterBean = gson.fromJson(data, NewsCenterBean.class);
         ArrayList<NewsCenterDataBean> dataBean = newsCenterBean.getData();
         NewsCenterDataBean dataBean1 = dataBean.get(0);
         final ArrayList<NewsCenterDataChildrenBean> childrenData = dataBean1.getChildren();
          mActivity.runOnUiThread(new Runnable() {
+             @SuppressLint("ClickableViewAccessibility")
              @Override
              public void run() {
                  for (NewsCenterDataChildrenBean childrenBean : childrenData){
                      channels.add(new ChannelBasePager(mActivity,childrenBean));
                  }
+                 mPositon=new int[channels.size()];
                  viewPager.setAdapter(new NewsCenterNewsViewPagerAdapter(channels));
+                 //默认选中界面0
+                 channels.get(0).initData(0);
+                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                     @Override
+                     public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
+
+                     }
+
+                     @Override
+                     public void onPageSelected(final int position) {
+                         //记录当前界面bannner轮播到的哪个页面
+                         channels.get(position).JiBanner(new JiLuBanner() {
+                             @Override
+                             public void JiLU(int currentposition) {
+                                 mPositon[position]=currentposition;
+                                 Log.d("位置",position+"");
+                             }
+                         });
+                         //当界面被选中时initData
+                         channels.get(position).initData(mPositon[position]);
+                         //关闭循环
+                         channels.get(position).setHandler(new RemoveHandler() {
+                             @Override
+//                             通过回调，先移除Handler的所有消息，然后在从新发送
+                             public void remove(android.os.Handler handler) {
+                                  handler.removeCallbacksAndMessages(null);
+                                  handler.sendEmptyMessageDelayed(0,3000);
+                             }
+                         });
+                         //停止其他界面的viewpager轮播清除他们的消息
+                         if(position!=0){
+                         channels.get(position-1).setHandler(new RemoveHandler() {
+                             @Override
+//                             通过回调，先移除Handler的所有消息，然后在从新发送
+                             public void remove(android.os.Handler handler) {
+                                 handler.removeCallbacksAndMessages(null);
+//                                 handler.sendEmptyMessageDelayed(0,3000);
+                             }
+                         });}
+                         if (position!=channels.size()-1){
+                         channels.get(position+1).setHandler(new RemoveHandler() {
+                             @Override
+//                             通过回调，先移除Handler的所有消息，然后在从新发送
+                             public void remove(android.os.Handler handler) {
+                                 handler.removeCallbacksAndMessages(null);
+//                                 handler.sendEmptyMessageDelayed(0,3000);
+                             }
+                         });}
+                     }
+
+                     @Override
+                     public void onPageScrollStateChanged(int state) {
+
+                     }
+                 });
 
              }
          });
 
 
     }
+
+
 
 }
