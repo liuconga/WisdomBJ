@@ -5,9 +5,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,7 +18,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.liucong.wisdombj.MyApplication;
 import com.liucong.wisdombj.R;
+import com.liucong.wisdombj.adapter.ChannelRecylerViewAdapter;
 import com.liucong.wisdombj.adapter.NewChannelAdapter;
+import com.liucong.wisdombj.bean.ListNews;
 import com.liucong.wisdombj.bean.NewsCenterDataChildrenBean;
 import com.liucong.wisdombj.bean.NewsChannelData;
 import com.liucong.wisdombj.bean.NewsChannelDataBean;
@@ -35,6 +40,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ChannelBasePager {
+    private int sign = 1000;
     protected AppCompatActivity mActivity;
     private View view;
     private NewsCenterDataChildrenBean dataChildrenBean;
@@ -61,6 +67,10 @@ public class ChannelBasePager {
     private int mPostion;
     private int currentPositon;
     private int positonWai;
+    private RecyclerView recyclerView;
+    private List<ListNews> listNews;
+    private ChannelRecylerViewAdapter myAdapter;
+
 
     public ChannelBasePager(AppCompatActivity mActivity, NewsCenterDataChildrenBean dataChildrenBean) {
         this.mActivity = mActivity;
@@ -73,8 +83,9 @@ public class ChannelBasePager {
      */
     protected View initView() {
         view = View.inflate(mActivity, R.layout.news_channel, null);
-        viewPager = view.findViewById(R.id.vp_news_channel);
-        linearLayout = view.findViewById(R.id.ll_news_channel);
+//        viewPager = view.findViewById(R.id.vp_news_channel);
+//        linearLayout = view.findViewById(R.id.ll_news_channel);
+        recyclerView = view.findViewById(R.id.recyclerview_channel);
         return view;
     }
 
@@ -82,7 +93,6 @@ public class ChannelBasePager {
      * 回调方法，主要是将，handler传到NewsCenterNews中
      */
     public void setHandler(NewsCenterNews.RemoveHandler removeHandler) {
-
         removeHandler.remove(handler);
     }
 
@@ -139,18 +149,27 @@ public class ChannelBasePager {
         Gson gson = new Gson();
         final NewsChannelData newsChannelData = gson.fromJson(data, NewsChannelData.class);
         final NewsChannelDataBean newsChannelDataBean = newsChannelData.getData();
+        listNews = newsChannelDataBean.getNews();
+        LogUtils.d("新闻列表", listNews.size() + "");
         topnews = newsChannelDataBean.getTopnews();
-        Log.d("我是TopNews", topnews.size() + " 执行了");
+//        Log.d("我是TopNews", topnews.size() + " 执行了");
         mActivity.runOnUiThread(new Runnable() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public void run() {
+                recyclerView.setLayoutManager(new LinearLayoutManager(MyApplication.getContext()));
+                //设置recylerview的adapter，初始化recylerview
+                myAdapter = new ChannelRecylerViewAdapter(listNews);
+                recyclerView.setAdapter(myAdapter);
+                setHeader(recyclerView);
                 viewPager.setAdapter(new NewChannelAdapter(topnews));
+
                 if (currentPositon == 0) {
                     viewPager.setCurrentItem(viewPager.getAdapter().getCount() / 2);
                 } else {
                     viewPager.setCurrentItem(currentPositon);
                 }
+
                 setBannerIndicator();
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
@@ -168,7 +187,7 @@ public class ChannelBasePager {
                         for (int i = 0; i < arrayLists[positonWai].size(); i++) {
                             if (i == position) {
                                 arrayLists[positonWai].get(i).setImageResource(R.drawable.banner_dot_select);
-                            }else {
+                            } else {
                                 arrayLists[positonWai].get(i).setImageResource(R.drawable.banner_dot);
                             }
                         }
@@ -201,6 +220,7 @@ public class ChannelBasePager {
                     }
                 });
 
+
             }
         });
 
@@ -208,7 +228,7 @@ public class ChannelBasePager {
 
     //设置小圆点
     public void setBannerIndicator() {
-        linearLayout.removeAllViews();
+//        linearLayout.removeAllViews();
         ArrayList<ImageView> imageViews = new ArrayList<>();
         //如果相应数组位置为空则新创建imageview集合
         if (arrayLists[positonWai] == null) {
@@ -228,15 +248,26 @@ public class ChannelBasePager {
         //否则从相应数组位置的集合中取出imageview
         else {
             for (int i = 0; i < arrayLists[positonWai].size(); i++) {
-                Log.d("长度", arrayLists[positonWai].size() + "");
-
+//                Log.d("长度", arrayLists[positonWai].get(i) + "");
                 ImageView imageView = arrayLists[positonWai].get(i);
                 if (i == currentPositon) {
                     imageView.setImageResource(R.drawable.banner_dot_select);
                 }
+                //判断子控件是否有父控件；移除父控件所有view；
+                ViewGroup parent = (ViewGroup) imageView.getParent();
+                if (parent != null) {
+                    parent.removeAllViews();
+                }
                 linearLayout.addView(imageView);
             }
         }
+    }
+
+    private void setHeader(RecyclerView view) {
+        View header = LayoutInflater.from(mActivity).inflate(R.layout.header, view, false);
+        viewPager = header.findViewById(R.id.vp_news_channel);
+        linearLayout = header.findViewById(R.id.ll_news_channel);
+        myAdapter.setmHeadView(header);
     }
 
     public void JiBanner(NewsCenterNews.JiLuBanner jiLuBanner) {

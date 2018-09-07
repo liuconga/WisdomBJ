@@ -16,7 +16,7 @@ public class NewsChannelDataBean {
     private String countcommenturl;
     private String more;
     private String title;
-    private List<?> news;
+    private List<ListNews> news;
     private List<?> topic;
     private List<TopicNews> topnews;
 
@@ -44,11 +44,11 @@ public class NewsChannelDataBean {
         this.title = title;
     }
 
-    public List<?> getNews() {
+    public List<ListNews> getNews() {
         return news;
     }
 
-    public void setNews(List<?> news) {
+    public void setNews(List<ListNews> news) {
         this.news = news;
     }
 
