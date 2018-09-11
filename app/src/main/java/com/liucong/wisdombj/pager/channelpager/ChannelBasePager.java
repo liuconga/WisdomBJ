@@ -161,9 +161,10 @@ public class ChannelBasePager {
                 //设置recylerview的adapter，初始化recylerview
                 myAdapter = new ChannelRecylerViewAdapter(listNews);
                 recyclerView.setAdapter(myAdapter);
+                //添加头
                 setHeader(recyclerView);
-                viewPager.setAdapter(new NewChannelAdapter(topnews));
 
+                viewPager.setAdapter(new NewChannelAdapter(topnews));
                 if (currentPositon == 0) {
                     viewPager.setCurrentItem(viewPager.getAdapter().getCount() / 2);
                 } else {
@@ -220,8 +221,10 @@ public class ChannelBasePager {
                     }
                 });
 
-
+                //t添加尾
+//                setFooter(recyclerView);
             }
+
         });
 
     }
@@ -263,11 +266,14 @@ public class ChannelBasePager {
         }
     }
 
+    /**
+     * 添加recylerview头布局
+     */
     private void setHeader(RecyclerView view) {
         View header = LayoutInflater.from(mActivity).inflate(R.layout.header, view, false);
         viewPager = header.findViewById(R.id.vp_news_channel);
         linearLayout = header.findViewById(R.id.ll_news_channel);
-        myAdapter.setmHeadView(header);
+        myAdapter.addHeaderView(header);
     }
 
     public void JiBanner(NewsCenterNews.JiLuBanner jiLuBanner) {
@@ -275,6 +281,10 @@ public class ChannelBasePager {
     }
 
 
+    public void setFooter(RecyclerView view) {
+        View footer = LayoutInflater.from(mActivity).inflate(R.layout.footer, view, false);
+        myAdapter.addFooterView(footer);
+    }
 }
 
 
