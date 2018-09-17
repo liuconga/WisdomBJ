@@ -161,9 +161,12 @@ public class ChannelBasePager {
                 //设置recylerview的adapter，初始化recylerview
                 myAdapter = new ChannelRecylerViewAdapter(listNews);
                 recyclerView.setAdapter(myAdapter);
+                //添加刷新头
+                setRefreshHeader(recyclerView);
                 //添加头
                 setHeader(recyclerView);
-
+                //t添加尾
+                setFooter(recyclerView);
                 viewPager.setAdapter(new NewChannelAdapter(topnews));
                 if (currentPositon == 0) {
                     viewPager.setCurrentItem(viewPager.getAdapter().getCount() / 2);
@@ -221,8 +224,7 @@ public class ChannelBasePager {
                     }
                 });
 
-                //t添加尾
-//                setFooter(recyclerView);
+
             }
 
         });
@@ -273,6 +275,10 @@ public class ChannelBasePager {
         View header = LayoutInflater.from(mActivity).inflate(R.layout.header, view, false);
         viewPager = header.findViewById(R.id.vp_news_channel);
         linearLayout = header.findViewById(R.id.ll_news_channel);
+        myAdapter.addHeaderView(header);
+    }
+    private void setRefreshHeader(RecyclerView view) {
+        View header = LayoutInflater.from(mActivity).inflate(R.layout.header_refresh, view, false);
         myAdapter.addHeaderView(header);
     }
 
